@@ -1,0 +1,9 @@
+{
+  "name": "react-native-imagine",
+  "version": "0.0.1",
+  "description": "Image deduplication for React and React Native projects",
+  "main": "index.js",
+  "repository": "https://github.com/tutts/react-native-imagine.git",
+  "author": "Sam Tutton <sam@quiqup.com>",
+  "license": "MIT"
+}
