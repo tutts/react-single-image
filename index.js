@@ -6,7 +6,12 @@ var crypto = require('crypto')
 
 const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
 const GLOB_OPTIONS = {
-  ignore: ['./node_modules/**', './example/RNSingleOrigin/node_modules/**'],
+  ignore: [
+    './node_modules/**',
+    './example/RNSingleOrigin/node_modules/**',
+    './example/RNSingleOrigin/android/**',
+    './example/RNSingleOrigin/ios/**',
+  ],
 }
 
 let symlinkMap = require('./example/RNSingleOrigin/images/.asset-map.json')
