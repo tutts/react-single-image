@@ -1,2 +1,3 @@
-# react-native-imagine
-Image deduplication for React and React Native projects 🖼
+# Single Origin
+
+Asset deduplication for React and React Native projects

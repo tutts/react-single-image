@@ -1,9 +1,9 @@
 {
-  "name": "react-native-imagine",
+  "name": "single-origin",
   "version": "0.0.1",
-  "description": "Image deduplication for React and React Native projects",
+  "description": "Asset deduplication for React and React Native projects",
   "main": "index.js",
-  "repository": "https://github.com/tutts/react-native-imagine.git",
+  "repository": "https://github.com/tutts/single-origin.git",
   "author": "Sam Tutton <sam@quiqup.com>",
   "license": "MIT"
 }
