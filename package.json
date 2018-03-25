@@ -5,5 +5,9 @@
   "main": "index.js",
   "repository": "https://github.com/tutts/single-origin.git",
   "author": "Sam Tutton <sam@quiqup.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^7.1.2",
+    "uuid": "^3.2.1"
+  }
 }

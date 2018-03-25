@@ -4,23 +4,18 @@ const fs = require('fs')
 const uuidv1 = require('uuid/v1')
 var crypto = require('crypto')
 
-const GLOBAL_IMAGE_DIR = './images'
+const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
 const GLOB_OPTIONS = {
-  ignore: [
-    './node_modules/**',
-  ],
+  ignore: ['./node_modules/**', './example/RNSingleOrigin/node_modules/**'],
 }
 
-let symlinkMap = require('./.image-dedupe-map.json')
+let symlinkMap = require('./example/RNSingleOrigin/images/.asset-map.json')
 
 main()
 
 function main() {
-  findFiles()
-}
-
-function imagePath(image) {
-  return path.resolve('./assets/images/pickup.png')
+  console.log('Starting Single Origin search...')
+  //findFiles()
 }
 
 function findFiles() {
