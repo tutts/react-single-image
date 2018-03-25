@@ -21,6 +21,9 @@ main()
 function main() {
   console.log('Starting Single Origin search...')
   //findFiles()
+  fs.symlink('./example/single-origin-test.png', './single-origin-test-sym.png', res => {
+    console.log(res)
+  })
 }
 
 function findFiles() {
@@ -34,15 +37,15 @@ function manageSymlinkMap(symMaps) {
   symMaps.forEach(symMap => {
     if (!symlinkMap[symMap.checksum]) {
       // add to symMap, move file and create Symlink
-      const originalPath = `${GLOBAL_IMAGE_DIR}/${symMap.checksum}.${symMap.path.split('.').pop()}`
+      const hashedFilePath = `${GLOBAL_IMAGE_DIR}/${symMap.checksum}.${symMap.path.split('.').pop()}`
 
-      console.log(symMap.path, originalPath)
-      fs.renameSync(symMap.path, originalPath)
-      addSymlink(originalPath, symMap.path)
+      fs.rename(symMap.path, hashedFilePath, () => {
+        addSymlink(hashedFilePath, symMap.path)
+      })
 
       symlinkMap[symMap.checksum] = {
         paths: [symMap.path],
-        originalPath,
+        hashedFilePath,
       }
     } else {
       // link to already made - remove file and create Symlink
