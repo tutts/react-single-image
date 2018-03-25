@@ -11,6 +11,7 @@ const GLOB_OPTIONS = {
     './example/RNSingleOrigin/node_modules/**',
     './example/RNSingleOrigin/android/**',
     './example/RNSingleOrigin/ios/**',
+    `${GLOBAL_IMAGE_DIR}/**`,
   ],
 }
 
@@ -20,6 +21,7 @@ main()
 
 function main() {
   console.log('Starting Single Origin search...')
+  symlinkMap = symlinkMap ? symlinkMap : {}
   findFiles()
 }
 
@@ -37,9 +39,8 @@ function manageSymlinkMap(symMaps) {
 
     if (!symlinkMap[symMap.checksum]) {
       // add to symMap, move file and create Symlink
-      fs.rename(symMap.path, hashedFilePath, () => {
-        addSymlink(hashedFilePath, symMap.path)
-      })
+      // fs.renameSync(symMap.path, hashedFilePath)
+      // addSymlink(hashedFilePath, symMap.path)
 
       symlinkMap[symMap.checksum] = {
         paths: [symMap.path],
@@ -49,15 +50,28 @@ function manageSymlinkMap(symMaps) {
     } else {
       // link to already made - remove file and create Symlink
       symlinkMap[symMap.checksum].paths.push(symMap.path)
-      addSymlink(hashedFilePath, symMap.path)
+      //
+      // fs.unlink(symMap.path, () => {
+      //   addSymlink(hashedFilePath, symMap.path)
+      // })
     }
+  })
+
+  Object.keys(symlinkMap).forEach(key => {
+    const sym = symlinkMap[key]
+
+    fs.copyFile(sym.paths[0], sym.hashedFilePath, () => {
+      sym.paths.forEach(filePath => {
+        fs.unlink(filePath, () => {
+          addSymlink(path.resolve(sym.hashedFilePath), filePath)
+        })
+      })
+    })
   })
 }
 
 function addSymlink(file, symLink) {
-  fs.symlink(file, symLink, res => {
-    console.log('Added a Symlink for:', symLink)
-  })
+  fs.symlinkSync(file, symLink)
 }
 
 function readFile(path) {
