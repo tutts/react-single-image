@@ -39,9 +39,6 @@ function manageSymlinkMap(symMaps) {
 
     if (!symlinkMap[symMap.checksum]) {
       // add to symMap, move file and create Symlink
-      // fs.renameSync(symMap.path, hashedFilePath)
-      // addSymlink(hashedFilePath, symMap.path)
-
       symlinkMap[symMap.checksum] = {
         paths: [symMap.path],
         hashedFilePath,
@@ -50,10 +47,6 @@ function manageSymlinkMap(symMaps) {
     } else {
       // link to already made - remove file and create Symlink
       symlinkMap[symMap.checksum].paths.push(symMap.path)
-      //
-      // fs.unlink(symMap.path, () => {
-      //   addSymlink(hashedFilePath, symMap.path)
-      // })
     }
   })
 
