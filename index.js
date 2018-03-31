@@ -5,6 +5,7 @@ const uuidv1 = require('uuid/v1')
 var crypto = require('crypto')
 
 const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
+const GLOBAL_MAP_DIR = GLOBAL_IMAGE_DIR + '/map.json'
 const GLOB_OPTIONS = {
   ignore: [
     './node_modules/**',
@@ -15,56 +16,67 @@ const GLOB_OPTIONS = {
   ],
 }
 
-let symlinkMap = require('./example/RNSingleOrigin/images/.asset-map.json')
+const SYMLINK_MAP = Object.assign({}, require(GLOBAL_MAP_DIR))
 
 main()
 
 function main() {
   console.log('Starting Single Origin search...')
-  symlinkMap = symlinkMap ? symlinkMap : {}
-  findFiles()
-}
-
-function findFiles() {
+  //symlinkMap = symlinkMap ? symlinkMap : {}
   glob('./**/*.png', GLOB_OPTIONS, (err, files) => {
-    const mappedFiles = files.map(file => readFile(file))
-    manageSymlinkMap(mappedFiles)
+    const filePaths = files.map(file => readFile(file))
+    const symlinkMap = generateSymlinkMap(filePaths, SYMLINK_MAP)
+
+    symlinkFiles(symlinkMap)
+    writeLocalMapFile(symlinkMap)
   })
 }
 
-function manageSymlinkMap(symMaps) {
-  symMaps.forEach(symMap => {
+function generateSymlinkMap(symLinkFilePaths, cachedMap) {
+  let cachedMapCopy = Object.assign({}, cachedMap)
+
+  symLinkFilePaths.forEach(symMap => {
     const extension = symMap.path.split('.').pop()
     const hashedFilePath = `${GLOBAL_IMAGE_DIR}/${symMap.checksum}.${extension}`
 
-    if (!symlinkMap[symMap.checksum]) {
+    if (!cachedMapCopy[symMap.checksum]) {
       // add to symMap, move file and create Symlink
-      symlinkMap[symMap.checksum] = {
+      cachedMapCopy[symMap.checksum] = {
         paths: [symMap.path],
         hashedFilePath,
         extension,
       }
     } else {
       // link to already made - remove file and create Symlink
-      symlinkMap[symMap.checksum].paths.push(symMap.path)
+      cachedMapCopy[symMap.checksum].paths.push(symMap.path)
     }
   })
 
+  return cachedMapCopy
+}
+
+function symlinkFiles(symlinkMap) {
   Object.keys(symlinkMap).forEach(key => {
     const sym = symlinkMap[key]
 
     fs.copyFile(sym.paths[0], sym.hashedFilePath, () => {
       sym.paths.forEach(filePath => {
         fs.unlink(filePath, () => {
-          addSymlink(path.resolve(sym.hashedFilePath), filePath)
+          fs.symlinkSync(path.resolve(sym.hashedFilePath), filePath)
         })
       })
     })
   })
 }
 
-function addSymlink(file, symLink) {
-  fs.symlinkSync(file, symLink)
+function writeLocalMapFile(symlinkMap) {
+  fs.writeFile(GLOBAL_MAP_DIR, JSON.stringify(symlinkMap), err => {
+    if (err) {
+      return console.log(err)
+    }
+
+    console.log('Asset map updated')
+  })
 }
 
 function readFile(path) {
