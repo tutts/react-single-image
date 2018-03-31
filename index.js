@@ -6,6 +6,8 @@ var crypto = require('crypto')
 
 const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
 const GLOBAL_MAP_DIR = GLOBAL_IMAGE_DIR + '/map.json'
+const SYMLINK_MAP = Object.assign({}, require(GLOBAL_MAP_DIR))
+
 const GLOB_OPTIONS = {
   ignore: [
     './node_modules/**',
@@ -14,9 +16,8 @@ const GLOB_OPTIONS = {
     './example/RNSingleOrigin/ios/**',
     `${GLOBAL_IMAGE_DIR}/**`,
   ],
+  symlinks: cachedSymlinks(SYMLINK_MAP),
 }
-
-const SYMLINK_MAP = Object.assign({}, require(GLOBAL_MAP_DIR))
 
 main()
 
@@ -27,7 +28,7 @@ function main() {
     const filePaths = files.map(file => readFile(file))
     const symlinkMap = generateSymlinkMap(filePaths, SYMLINK_MAP)
 
-    symlinkFiles(symlinkMap)
+    //symlinkFiles(symlinkMap)
     writeLocalMapFile(symlinkMap)
   })
 }
@@ -93,4 +94,8 @@ function checksum(str) {
     .createHash('md5')
     .update(str)
     .digest('hex')
+}
+
+function cachedSymlinks(symlinkMap) {
+  return Object.entries(symlinkMap).reduce((prev, next) => prev.concat(next[1].paths), [])
 }
