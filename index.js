@@ -6,8 +6,8 @@ var crypto = require('crypto')
 
 const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
 const GLOBAL_MAP_DIR = GLOBAL_IMAGE_DIR + '/map.json'
-const SYMLINK_MAP = Object.assign({}, require(GLOBAL_MAP_DIR))
-
+const SYMLINK_MAP = require(GLOBAL_MAP_DIR)
+const SYMLINK_MAP_PATHS = cachedSymlinks(SYMLINK_MAP)
 const GLOB_OPTIONS = {
   ignore: [
     './node_modules/**',
@@ -15,26 +15,27 @@ const GLOB_OPTIONS = {
     './example/RNSingleOrigin/android/**',
     './example/RNSingleOrigin/ios/**',
     `${GLOBAL_IMAGE_DIR}/**`,
+    ...SYMLINK_MAP_PATHS,
   ],
-  symlinks: cachedSymlinks(SYMLINK_MAP),
+  symlinks: SYMLINK_MAP_PATHS,
 }
 
 main()
 
 function main() {
   console.log('Starting Single Origin search...')
-  //symlinkMap = symlinkMap ? symlinkMap : {}
+
   glob('./**/*.png', GLOB_OPTIONS, (err, files) => {
     const filePaths = files.map(file => readFile(file))
     const symlinkMap = generateSymlinkMap(filePaths, SYMLINK_MAP)
 
-    //symlinkFiles(symlinkMap)
+    symlinkFiles(symlinkMap)
     writeLocalMapFile(symlinkMap)
   })
 }
 
 function generateSymlinkMap(symLinkFilePaths, cachedMap) {
-  let cachedMapCopy = Object.assign({}, cachedMap)
+  let cachedMapCopy = { ...cachedMap }
 
   symLinkFilePaths.forEach(symMap => {
     const extension = symMap.path.split('.').pop()
