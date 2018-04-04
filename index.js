@@ -2,7 +2,7 @@ const path = require('path')
 const glob = require('glob')
 const fs = require('fs')
 const uuidv1 = require('uuid/v1')
-var crypto = require('crypto')
+const crypto = require('crypto')
 
 const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
 const GLOBAL_MAP_DIR = GLOBAL_IMAGE_DIR + '/map.json'
@@ -19,18 +19,33 @@ const GLOB_OPTIONS = {
   ],
   symlinks: SYMLINK_MAP_PATHS,
 }
-
-main()
+const defaultSettings = { symlinks: true }
+const settings = { ...defaultSettings, ...require('./example/RNSingleOrigin/package.json').singleOrigin }
 
 function main() {
-  console.log('Starting Single Origin search...')
-
   glob('./**/*.png', GLOB_OPTIONS, (err, files) => {
     const filePaths = files.map(file => readFile(file))
     const symlinkMap = generateSymlinkMap(filePaths, SYMLINK_MAP)
+    const linkMethod = settings.symlinks ? fs.symlinkSync : createReferenceFolder
 
-    symlinkFiles(symlinkMap)
+    symlinkFiles(symlinkMap, linkMethod)
     writeLocalMapFile(symlinkMap)
+  })
+}
+
+function createReferenceFolder(newPath, originalPath) {
+  const relativePath = path.relative(originalPath, newPath)
+
+  fs.mkdir(originalPath, err => {
+    if (err && err.code !== 'EEXIST') {
+      return console.log(err)
+    }
+
+    fs.writeFile(`${originalPath}/index.js`, `export default require('${relativePath}')`, indexErr => {
+      if (indexErr) {
+        return console.log(indexErr)
+      }
+    })
   })
 }
 
@@ -57,14 +72,14 @@ function generateSymlinkMap(symLinkFilePaths, cachedMap) {
   return cachedMapCopy
 }
 
-function symlinkFiles(symlinkMap) {
+function symlinkFiles(symlinkMap, linkMethod) {
   Object.keys(symlinkMap).forEach(key => {
     const sym = symlinkMap[key]
 
     fs.copyFile(sym.paths[0], sym.hashedFilePath, () => {
       sym.paths.forEach(filePath => {
         fs.unlink(filePath, () => {
-          fs.symlinkSync(path.resolve(sym.hashedFilePath), filePath)
+          linkMethod(path.resolve(sym.hashedFilePath), filePath)
         })
       })
     })

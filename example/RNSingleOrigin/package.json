@@ -18,5 +18,8 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "singleOrigin": {
+    "symlinks": false
   }
 }
