@@ -10,6 +10,7 @@ const SYMLINK_MAP = require(GLOBAL_MAP_DIR)
 const SYMLINK_MAP_PATHS = cachedSymlinks(SYMLINK_MAP)
 const GLOB_OPTIONS = {
   ignore: [
+    './compomnents/**',
     './node_modules/**',
     './example/RNSingleOrigin/node_modules/**',
     './example/RNSingleOrigin/android/**',
@@ -22,7 +23,7 @@ const GLOB_OPTIONS = {
 const defaultSettings = { symlinks: true }
 const settings = { ...defaultSettings, ...require('./example/RNSingleOrigin/package.json').singleOrigin }
 
-function main() {
+;(function () {
   glob('./**/*.png', GLOB_OPTIONS, (err, files) => {
     const filePaths = files.map(file => readFile(file))
     const symlinkMap = generateSymlinkMap(filePaths, SYMLINK_MAP)
@@ -31,7 +32,7 @@ function main() {
     symlinkFiles(symlinkMap, linkMethod)
     writeLocalMapFile(symlinkMap)
   })
-}
+})()
 
 function createReferenceFolder(newPath, originalPath) {
   const relativePath = path.relative(originalPath, newPath)
