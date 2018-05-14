@@ -20,6 +20,6 @@
     "preset": "react-native"
   },
   "singleOrigin": {
-    "symlinks": false
+    "symlinks": true
   }
 }

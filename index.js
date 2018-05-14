@@ -10,7 +10,7 @@ const SYMLINK_MAP = require(GLOBAL_MAP_DIR)
 const SYMLINK_MAP_PATHS = cachedSymlinks(SYMLINK_MAP)
 const GLOB_OPTIONS = {
   ignore: [
-    './compomnents/**',
+    './components/**',
     './node_modules/**',
     './example/RNSingleOrigin/node_modules/**',
     './example/RNSingleOrigin/android/**',
@@ -25,6 +25,10 @@ const settings = { ...defaultSettings, ...require('./example/RNSingleOrigin/pack
 
 ;(function () {
   glob('./**/*.png', GLOB_OPTIONS, (err, files) => {
+    if(err) {
+      return console.log('ERR:INIT', err)
+    }
+
     const filePaths = files.map(file => readFile(file))
     const symlinkMap = generateSymlinkMap(filePaths, SYMLINK_MAP)
     const linkMethod = settings.symlinks ? fs.symlinkSync : createReferenceFolder
