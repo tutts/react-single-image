@@ -4,7 +4,7 @@ Asset deduplication for React and React Native projects
 
 ## Todo
 
-- [ ] Revert
+- [X] Revert
 - [ ] Update
 - [ ] CLI
 - [ ] Tests

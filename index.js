@@ -77,6 +77,27 @@ function generateSymlinkMap(symLinkFilePaths, cachedMap) {
   return cachedMapCopy
 }
 
+function revertSymlinkMap(symlinkMap) {
+  Object.keys(symlinkMap).forEach(key => {
+    const sym = symlinkMap[key]
+
+    sym.paths.forEach(path => {
+      fs.unlinkSync(path)
+      fs.copyFileSync(sym.hashedFilePath, path)
+    })
+
+    fs.unlink(sym.hashedFilePath, err => {
+      if(err) {
+        console.log(`${key}.${sym.extension} failed reverted ❌`)
+      }
+
+      console.log(`${key}.${sym.extension} reverted successfully ✅`)
+    })
+  })
+
+  writeLocalMapFile({})
+}
+
 function symlinkFiles(symlinkMap, linkMethod) {
   Object.keys(symlinkMap).forEach(key => {
     const sym = symlinkMap[key]
