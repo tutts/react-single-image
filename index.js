@@ -54,6 +54,26 @@ function createReferenceFolder(newPath, originalPath) {
   })
 }
 
+function updateSymlinkMap(symlinkMap) {
+  let cachedMapCopy = { ...symlinkMap }
+  const orphans = []
+
+  Object.keys(symlinkMap).forEach(sha => {
+    cachedMapCopy[sha].paths = cachedMapCopy[sha].paths.filter(path => fs.existsSync(path))
+
+    if(!cachedMapCopy[sha].paths.length) {
+      orphans.push(sha)
+    }
+  })
+
+  orphans.forEach(orphan => {
+    fs.unlinkSync(cachedMapCopy[orphan].hashedFilePath)
+    delete cachedMapCopy[orphan]
+  })
+
+  return cachedMapCopy
+}
+
 function generateSymlinkMap(symLinkFilePaths, cachedMap) {
   let cachedMapCopy = { ...cachedMap }
 
