@@ -4,9 +4,9 @@ const fs = require('fs')
 const uuidv1 = require('uuid/v1')
 const crypto = require('crypto')
 
-const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
-const GLOBAL_MAP_DIR = GLOBAL_IMAGE_DIR + '/map.json'
-const SYMLINK_MAP = require(GLOBAL_MAP_DIR)
+//const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
+const MAP_DIR = '/map.json'
+// const SYMLINK_MAP = require(assetDirectory + MAP_DIR)
 const SYMLINK_MAP_PATHS = cachedSymlinks(SYMLINK_MAP)
 const GLOB_OPTIONS = {
   ignore: [
@@ -20,23 +20,28 @@ const GLOB_OPTIONS = {
   ],
   symlinks: SYMLINK_MAP_PATHS,
 }
-const defaultSettings = { symlinks: true }
-const settings = { ...defaultSettings, ...require('./example/RNSingleOrigin/package.json').singleOrigin }
 
-;(function () {
-  glob('./**/*.png', GLOB_OPTIONS, (err, files) => {
+module.exports = {
+  create,
+  // update,
+  // revert,
+}
+
+function create(regex, assetDirectory, isSymlink) {
+  glob(regex, GLOB_OPTIONS, (err, files) => {
     if(err) {
       return console.log('ERR:INIT', err)
     }
 
+    const symlinkMap = require(assetDirectory + MAP_DIR)
     const filePaths = files.map(file => readFile(file))
-    const symlinkMap = generateSymlinkMap(filePaths, SYMLINK_MAP)
-    const linkMethod = settings.symlinks ? fs.symlinkSync : createReferenceFolder
+    const symlinkMap = generateSymlinkMap(filePaths, symlinkMap)
+    const linkMethod = isSymlink ? fs.symlinkSync : createReferenceFolder
 
     symlinkFiles(symlinkMap, linkMethod)
     writeLocalMapFile(symlinkMap)
   })
-})()
+}
 
 function createReferenceFolder(newPath, originalPath) {
   const relativePath = path.relative(originalPath, newPath)
