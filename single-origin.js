@@ -4,22 +4,7 @@ const fs = require('fs')
 const uuidv1 = require('uuid/v1')
 const crypto = require('crypto')
 
-//const GLOBAL_IMAGE_DIR = './example/RNSingleOrigin/images'
 const MAP_DIR = '/map.json'
-// const SYMLINK_MAP = require(assetDirectory + MAP_DIR)
-const SYMLINK_MAP_PATHS = cachedSymlinks(SYMLINK_MAP)
-const GLOB_OPTIONS = {
-  ignore: [
-    './components/**',
-    './node_modules/**',
-    './example/RNSingleOrigin/node_modules/**',
-    './example/RNSingleOrigin/android/**',
-    './example/RNSingleOrigin/ios/**',
-    `${GLOBAL_IMAGE_DIR}/**`,
-    ...SYMLINK_MAP_PATHS,
-  ],
-  symlinks: SYMLINK_MAP_PATHS,
-}
 
 module.exports = {
   create,
@@ -27,19 +12,24 @@ module.exports = {
   // revert,
 }
 
-function create(regex, assetDirectory, isSymlink) {
-  glob(regex, GLOB_OPTIONS, (err, files) => {
-    if(err) {
+function create(matcher, assetDirectory, ignorePaths, isSymlink) {
+  const symlinkMap = require(assetDirectory + MAP_DIR)
+  const options = {
+    ignore: ignorePaths,
+    symlinks: cachedSymlinks(symlinkMap),
+  }
+
+  glob(matcher, options, (err, files) => {
+    if (err) {
       return console.log('ERR:INIT', err)
     }
 
-    const symlinkMap = require(assetDirectory + MAP_DIR)
     const filePaths = files.map(file => readFile(file))
-    const symlinkMap = generateSymlinkMap(filePaths, symlinkMap)
+    const symlinkMap = generateSymlinkMap(filePaths, symlinkMap, assetDirectory)
     const linkMethod = isSymlink ? fs.symlinkSync : createReferenceFolder
 
     symlinkFiles(symlinkMap, linkMethod)
-    writeLocalMapFile(symlinkMap)
+    writeLocalMapFile(symlinkMap, assetDirectory)
   })
 }
 
@@ -51,11 +41,15 @@ function createReferenceFolder(newPath, originalPath) {
       return console.log(err)
     }
 
-    fs.writeFile(`${originalPath}/index.js`, `export default require('${relativePath}')`, indexErr => {
-      if (indexErr) {
-        return console.log(indexErr)
+    fs.writeFile(
+      `${originalPath}/index.js`,
+      `export default require('${relativePath}')`,
+      indexErr => {
+        if (indexErr) {
+          return console.log(indexErr)
+        }
       }
-    })
+    )
   })
 }
 
@@ -64,9 +58,11 @@ function updateSymlinkMap(symlinkMap) {
   const orphans = []
 
   Object.keys(symlinkMap).forEach(sha => {
-    cachedMapCopy[sha].paths = cachedMapCopy[sha].paths.filter(path => fs.existsSync(path))
+    cachedMapCopy[sha].paths = cachedMapCopy[sha].paths.filter(path =>
+      fs.existsSync(path)
+    )
 
-    if(!cachedMapCopy[sha].paths.length) {
+    if (!cachedMapCopy[sha].paths.length) {
       orphans.push(sha)
     }
   })
@@ -79,12 +75,12 @@ function updateSymlinkMap(symlinkMap) {
   return cachedMapCopy
 }
 
-function generateSymlinkMap(symLinkFilePaths, cachedMap) {
+function generateSymlinkMap(symLinkFilePaths, cachedMap, assetDirectory) {
   let cachedMapCopy = { ...cachedMap }
 
   symLinkFilePaths.forEach(symMap => {
     const extension = symMap.path.split('.').pop()
-    const hashedFilePath = `${GLOBAL_IMAGE_DIR}/${symMap.checksum}.${extension}`
+    const hashedFilePath = `${assetDirectory}/${symMap.checksum}.${extension}`
 
     if (!cachedMapCopy[symMap.checksum]) {
       // add to symMap, move file and create Symlink
@@ -112,7 +108,7 @@ function revertSymlinkMap(symlinkMap) {
     })
 
     fs.unlink(sym.hashedFilePath, err => {
-      if(err) {
+      if (err) {
         console.log(`${key}.${sym.extension} failed reverted ❌`)
       }
 
@@ -137,8 +133,8 @@ function symlinkFiles(symlinkMap, linkMethod) {
   })
 }
 
-function writeLocalMapFile(symlinkMap) {
-  fs.writeFile(GLOBAL_MAP_DIR, JSON.stringify(symlinkMap), err => {
+function writeLocalMapFile(symlinkMap, assetDirectory) {
+  fs.writeFile(assetDirectory, JSON.stringify(symlinkMap), err => {
     if (err) {
       return console.log(err)
     }
@@ -164,5 +160,8 @@ function checksum(str) {
 }
 
 function cachedSymlinks(symlinkMap) {
-  return Object.entries(symlinkMap).reduce((prev, next) => prev.concat(next[1].paths), [])
+  return Object.entries(symlinkMap).reduce(
+    (prev, next) => prev.concat(next[1].paths),
+    []
+  )
 }
