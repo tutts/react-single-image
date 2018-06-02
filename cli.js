@@ -40,5 +40,5 @@ if (program.update) {
 
 if (program.revert) {
   console.log('☕️ Reverting all changes')
-  singleOrigin.revert()
+  singleOrigin.revert(settings.imagePath, settings.mapFilename)
 }

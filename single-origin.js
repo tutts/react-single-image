@@ -3,11 +3,12 @@ const glob = require('glob')
 const fs = require('fs')
 const uuidv1 = require('uuid/v1')
 const crypto = require('crypto')
+const rimraf = require('rimraf')
 
 module.exports = {
   create,
   // update,
-  // revert,
+  revert,
 }
 
 function create(matcher, imagePath, ignorePaths, symlinks, mapFilename) {
@@ -29,6 +30,14 @@ function create(matcher, imagePath, ignorePaths, symlinks, mapFilename) {
     symlinkFiles(symlinkMap, linkMethod)
     writeLocalMapFile(symlinkMap, mapPath)
   })
+}
+
+function revert(imagePath, mapFilename) {
+  const mapPath = `${imagePath}/${mapFilename}`
+  const symlinkMap = require(mapPath)
+
+  revertSymlinkMap(symlinkMap)
+  writeLocalMapFile({}, mapPath)
 }
 
 function createReferenceFolder(newPath, originalPath) {
@@ -102,7 +111,14 @@ function revertSymlinkMap(symlinkMap) {
     const sym = symlinkMap[key]
 
     sym.paths.forEach(path => {
-      fs.unlinkSync(path)
+      const isDirectory = fs.lstatSync(path).isDirectory()
+
+      if (isDirectory) {
+        rimraf.sync(path)
+      } else {
+        fs.unlinkSync(path)
+      }
+
       fs.copyFileSync(sym.hashedFilePath, path)
     })
 
@@ -114,8 +130,6 @@ function revertSymlinkMap(symlinkMap) {
       console.log(`${key}.${sym.extension} reverted successfully ✅`)
     })
   })
-
-  writeLocalMapFile({})
 }
 
 function symlinkFiles(symlinkMap, linkMethod) {
