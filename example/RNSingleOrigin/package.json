@@ -20,13 +20,13 @@
     "preset": "react-native"
   },
   "singleOrigin": {
-    "symlinks": true,
-    "ignore": [
-      "./node_modules/**",
-      "./android/**",
-      "./ios/**"
+    "symlinks": false,
+    "ignorePaths": [
+      "./example/RNSingleOrigin/node_modules/**",
+      "./example/RNSingleOrigin/android/**",
+      "./example/RNSingleOrigin/ios/**"
     ],
-    "imageDir": "./example/RNSingleOrigin/images",
+    "imagePath": "./example/RNSingleOrigin/images",
     "matcher": "./**/*.png"
   }
 }

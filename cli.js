@@ -5,9 +5,10 @@ const singleOrigin = require('./single-origin')
 // CONFIG
 const defaultSettings = {
   symlinks: true,
-  ignore: ['./node_modules/**'],
+  ignore: ['./node_modules/**', './images'],
   imageDir: './images',
   matcher: './**/*.png',
+  mapFilename: '/map.json',
 }
 const settings = {
   ...defaultSettings,
@@ -25,9 +26,10 @@ if (program.create) {
   console.log('☕️ Creating asset map')
   singleOrigin.create(
     settings.matcher,
-    settings.imageDir,
-    settings.ignore,
-    settings.symlinks
+    settings.imagePath,
+    settings.ignorePaths,
+    settings.symlinks,
+    settings.mapFilename
   )
 }
 

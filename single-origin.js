@@ -4,19 +4,16 @@ const fs = require('fs')
 const uuidv1 = require('uuid/v1')
 const crypto = require('crypto')
 
-const MAP_DIR = '/map.json'
-
 module.exports = {
   create,
   // update,
   // revert,
 }
 
-function create(matcher, assetDirectory, ignorePaths, isSymlink) {
-  const symlinkMap = require(assetDirectory + MAP_DIR)
+function create(matcher, imagePath, ignorePaths, symlinks, mapFilename) {
   const options = {
-    ignore: ignorePaths,
-    symlinks: cachedSymlinks(symlinkMap),
+    ignore: [`${imagePath}/**`, ...ignorePaths],
+    //symlinks: cachedSymlinks(symlinkMap),
   }
 
   glob(matcher, options, (err, files) => {
@@ -24,12 +21,13 @@ function create(matcher, assetDirectory, ignorePaths, isSymlink) {
       return console.log('ERR:INIT', err)
     }
 
+    const mapPath = `${imagePath}/${mapFilename}`
     const filePaths = files.map(file => readFile(file))
-    const symlinkMap = generateSymlinkMap(filePaths, symlinkMap, assetDirectory)
-    const linkMethod = isSymlink ? fs.symlinkSync : createReferenceFolder
+    const symlinkMap = generateSymlinkMap(filePaths, mapPath, imagePath)
+    const linkMethod = symlinks ? fs.symlinkSync : createReferenceFolder
 
     symlinkFiles(symlinkMap, linkMethod)
-    writeLocalMapFile(symlinkMap, assetDirectory)
+    writeLocalMapFile(symlinkMap, mapPath)
   })
 }
 
@@ -75,7 +73,8 @@ function updateSymlinkMap(symlinkMap) {
   return cachedMapCopy
 }
 
-function generateSymlinkMap(symLinkFilePaths, cachedMap, assetDirectory) {
+function generateSymlinkMap(symLinkFilePaths, mapPath, assetDirectory) {
+  const cachedMap = require(mapPath)
   let cachedMapCopy = { ...cachedMap }
 
   symLinkFilePaths.forEach(symMap => {
@@ -133,8 +132,8 @@ function symlinkFiles(symlinkMap, linkMethod) {
   })
 }
 
-function writeLocalMapFile(symlinkMap, assetDirectory) {
-  fs.writeFile(assetDirectory, JSON.stringify(symlinkMap), err => {
+function writeLocalMapFile(symlinkMap, mapPath) {
+  fs.writeFile(mapPath, JSON.stringify(symlinkMap), err => {
     if (err) {
       return console.log(err)
     }
