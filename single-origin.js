@@ -7,7 +7,7 @@ const rimraf = require('rimraf')
 
 module.exports = {
   create,
-  // update,
+  update,
   revert,
 }
 
@@ -38,6 +38,14 @@ function revert(imagePath, mapFilename) {
 
   revertSymlinkMap(symlinkMap)
   writeLocalMapFile({}, mapPath)
+}
+
+function update(imagePath, mapFilename) {
+  const mapPath = `${imagePath}/${mapFilename}`
+  const symlinkMap = require(mapPath)
+
+  const updatedMap = updateSymlinkMap(symlinkMap)
+  writeLocalMapFile(updatedMap, mapPath)
 }
 
 function createReferenceFolder(newPath, originalPath) {

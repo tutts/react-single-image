@@ -35,7 +35,7 @@ if (program.create) {
 
 if (program.update) {
   console.log('☕️ Updating asset map')
-  singleOrigin.update()
+  singleOrigin.update(settings.imagePath, settings.mapFilename)
 }
 
 if (program.revert) {
