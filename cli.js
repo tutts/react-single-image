@@ -1,6 +1,7 @@
 const program = require('commander')
 const package = require('./package.json')
 const singleOrigin = require('./single-origin')
+const create = require('./lib/create')
 
 // CONFIG
 const defaultSettings = {
@@ -24,7 +25,7 @@ program
 
 if (program.create) {
   console.log('☕️ Creating asset map')
-  singleOrigin.create(
+  create(
     settings.matcher,
     settings.imagePath,
     settings.ignorePaths,
