@@ -1,4 +1,4 @@
-const package = require('./package.json')
+const { singleOrigin } = require('./package.json')
 const create = require('./lib/api/create')
 const revert = require('./lib/api/revert')
 const update = require('./lib/api/update')
@@ -15,7 +15,7 @@ const defaultSettings = {
 
 const settings = {
   ...defaultSettings,
-  ...resolveRoot(package.singleOrigin),
+  ...resolveRoot(singleOrigin || {}),
 }
 
 module.exports = {
