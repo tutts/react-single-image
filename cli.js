@@ -4,6 +4,7 @@ const path = require('path')
 const package = require('./package.json')
 const singleOrigin = require('./single-origin')
 const create = require('./lib/create')
+const revert = require('./lib/revert')
 
 const ROOT_DIR_REGEX = /<rootDir>/
 const ROOT_DIR = process.cwd()
@@ -80,5 +81,5 @@ if (program.update) {
 
 if (program.revert) {
   console.log('☕️ Reverting all changes')
-  singleOrigin.revert(settings.imagePath, settings.mapFilename)
+  revert(settings.imagePath, settings.mapFilename)
 }
