@@ -14,6 +14,17 @@
     "printWidth": 80,
     "semi": false
   },
+  "singleOrigin": {
+    "symlinks": false,
+    "ignorePaths": [
+      "<rootDir>/node_modules/**",
+      "<rootDir>/android/**",
+      "<rootDir>/ios/**"
+    ],
+    "imagePath": "<rootDir>/images",
+    "matcher": "./**/*.png",
+    "rootDir": "./example/RNSingleOrigin"
+  },
   "dependencies": {
     "commander": "^2.15.1",
     "glob": "^7.1.2",
