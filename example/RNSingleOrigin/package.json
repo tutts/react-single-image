@@ -22,11 +22,11 @@
   "singleOrigin": {
     "symlinks": false,
     "ignorePaths": [
-      "./example/RNSingleOrigin/node_modules/**",
-      "./example/RNSingleOrigin/android/**",
-      "./example/RNSingleOrigin/ios/**"
+      "./node_modules/**",
+      "./android/**",
+      "./ios/**"
     ],
-    "imagePath": "./example/RNSingleOrigin/images",
+    "imagePath": "./images",
     "matcher": "./**/*.png"
   }
 }

@@ -6,34 +6,34 @@ const crypto = require('crypto')
 const rimraf = require('rimraf')
 
 module.exports = {
-  create,
+  //create,
   update,
   revert,
 }
 
-function create(matcher, imagePath, ignorePaths, symlinks, mapFilename) {
-  const mapPath = `${imagePath}/${mapFilename}`
-  const existingMap = require(mapPath)
-  const symPaths =
-    typeof existingMap === 'object' ? cachedSymlinks(existingMap) : []
-  const options = {
-    ignore: [`${imagePath}/**`, ...ignorePaths, ...symPaths],
-    symlinks: symPaths,
-  }
+// function create(matcher, imagePath, ignorePaths, symlinks, mapFilename) {
+//   const mapPath = `${imagePath}/${mapFilename}`
+//   const existingMap = require(mapPath)
+//   const symPaths =
+//     typeof existingMap === 'object' ? cachedSymlinks(existingMap) : []
+//   const options = {
+//     ignore: [`${imagePath}/**`, ...ignorePaths, ...symPaths],
+//     symlinks: symPaths,
+//   }
 
-  glob(matcher, options, (err, files) => {
-    if (err) {
-      return console.log('ERR:INIT', err)
-    }
+//   glob(matcher, options, (err, files) => {
+//     if (err) {
+//       return console.log('ERR:INIT', err)
+//     }
 
-    const filePaths = files.map(file => readFile(file))
-    const symlinkMap = generateSymlinkMap(filePaths, existingMap, imagePath)
-    const linkMethod = symlinks ? fs.symlinkSync : createReferenceFolder
+//     const filePaths = files.map(file => readFile(file))
+//     const symlinkMap = generateSymlinkMap(filePaths, existingMap, imagePath)
+//     const linkMethod = symlinks ? fs.symlinkSync : createReferenceFolder
 
-    symlinkFiles(symlinkMap, linkMethod)
-    writeLocalMapFile(symlinkMap, mapPath)
-  })
-}
+//     symlinkFiles(symlinkMap, linkMethod)
+//     writeLocalMapFile(symlinkMap, mapPath)
+//   })
+// }
 
 function revert(imagePath, mapFilename) {
   const mapPath = `${imagePath}/${mapFilename}`
