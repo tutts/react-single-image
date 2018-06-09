@@ -5,6 +5,7 @@ const package = require('./package.json')
 const singleOrigin = require('./single-origin')
 const create = require('./lib/create')
 const revert = require('./lib/revert')
+const update = require('./lib/update')
 
 const ROOT_DIR_REGEX = /<rootDir>/
 const ROOT_DIR = process.cwd()
@@ -76,7 +77,7 @@ if (program.create) {
 
 if (program.update) {
   console.log('☕️ Updating asset map')
-  singleOrigin.update(settings.imagePath, settings.mapFilename)
+  update(settings.imagePath, settings.mapFilename)
 }
 
 if (program.revert) {
