@@ -6,6 +6,9 @@
   "repository": "https://github.com/tutts/single-origin.git",
   "author": "Sam Tutton <sam@quiqup.com>",
   "license": "MIT",
+  "bin": {
+    "single-origin": "./cli.js"
+  },
   "prettier": {
     "singleQuote": true,
     "trailingComma": "es5",
