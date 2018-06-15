@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Create creates a map with symlinks 1`] = `Object {}`;

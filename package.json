@@ -1,13 +1,16 @@
 {
   "name": "single-origin",
-  "version": "0.0.1",
+  "version": "0.0.1-beta.2",
   "description": "Asset deduplication for React and React Native projects",
   "main": "index.js",
   "repository": "https://github.com/tutts/single-origin.git",
   "author": "Sam Tutton <sam@quiqup.com>",
   "license": "MIT",
   "bin": {
-    "single-origin": "./cli.js"
+    "single-origin": "./index.js"
+  },
+  "scripts": {
+    "test": "jest ./lib"
   },
   "prettier": {
     "singleQuote": true,
@@ -26,7 +29,8 @@
     ],
     "imagePath": "<rootDir>/images",
     "matcher": "./**/*.png",
-    "rootDir": "./example/RNSingleOrigin"
+    "rootDir": "./example/RNSingleOrigin",
+    "mapFilename": "map.json"
   },
   "dependencies": {
     "commander": "^2.15.1",
@@ -34,5 +38,7 @@
     "rimraf": "^2.6.2",
     "uuid": "^3.2.1"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "jest": "^23.1.0"
+  }
 }

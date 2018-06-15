@@ -2,7 +2,7 @@
 
 const program = require('commander')
 const { version } = require('./package.json')
-const { settings, create, revert, update } = require('./single-origin')
+const { settings, create, revert, update } = require('./lib/single-origin')
 
 program
   .version(version)
@@ -11,7 +11,9 @@ program
   .option('-r, --revert', 'Revert your assets')
   .parse(process.argv)
 
-if (program.create) {
+const isDefaultCommand = !program.create && !program.update && !program.revert
+
+if (program.create || isDefaultCommand) {
   console.log('☕️ Creating asset map')
   create(
     settings.matcher,
