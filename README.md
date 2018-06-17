@@ -1,6 +1,6 @@
 # Single Origin ☕️
 
-Asset deduplication for React and React Native projects
+Image deduplication for React and React Native projects
 
 > 🚨 Please note! 🚨
 >
@@ -8,17 +8,17 @@ Asset deduplication for React and React Native projects
 
 ## Why?
 
-If you've used React and React Native, the philosophy of creating modular components has been embedded in us for some time. Usually within a loosely coupled component, it contains everything it needs, from the View, Styles, Tests etc. However, in every project I contribute towards, I always see the same occurrence, the global images folder.
+In a loosely coupled component world, its common for the View, Styles, Tests etc to coexist together.
 
-The global image folder is an exception to that modular rule, and with time we find that our images folder increases in size, and sooner or later on large scale projects it becomes a burden to look through images, or rely on friendly naming conventions to find an image that might have been used before, thus not increasing your project source size unnecessarily.
+The global image folder is an exception to that modular rule, and with time we find our image folder increases in size as a project grows. We become reliant on friendly naming conventions or manually searching through a catalogue of images to avoid adding a duplicates.
 
-![image](https://i.imgur.com/BHrBONf.png)
+<img src="https://i.imgur.com/BHrBONf.png" width="400" />
 
 ## Solution
 
-With Single Origin, it encourages the user to include the image with the component, allowing the image to move freely with the module as a whole, no more long absolute references back to image or aliases.
+With Single Origin, it encourages the user to couple an image within a component folder, allowing the image to move freely with the module as a whole.
 
-Single Origin does this using its Command Line Utility, after configuration it looks through your source files and identifies images based on a matcher, it then hoists the image into a global directory and leaves behind a Symlink or Reference File with the same name, duplicate images use the same source.
+Single Origin does this by walking a projects source files and identifies images based on it's matcher, it then hoists unique images into a global directory and leaves behind a Symlink or Reference File with the same name.
 
 ## Installation
 
@@ -29,6 +29,7 @@ yarn add single-origin@0.0.1-beta.2
 1. Add a global target folder for your images e.g. `my-react-project/images`
 2. Create an empty `my-react-project/images/map.json` file inside of global target Folder
 3. Run the [`create`](#create) command in the project root folder, e.g. `single-origin --create`
+4. Start putting your images inside your component folder! 🎉
 
 ## Configuration
 
@@ -110,3 +111,29 @@ single-origin --update
 ### `revert`
 
 Reverts your global target folder and puts images back into original folders
+
+## FAQ
+
+> Should I use this in Production?
+
+Single Origin is still in BETA, but should you use it, please open an issue in Github if you find something doesn't work. Remember to test on a separate branch to avoid any disasters!
+
+> I use the metro bundler for React Native, will this work with Symlinks?
+
+Mixed results in testing! Which is why Single Origin defaults to "Folder References" for React Native, we take advantage of the Node resolver and create a folder name with of the image, and include a default export inside an `index.js`
+
+> Does this work with [Haul](https://github.com/callstack/haul) bundler?
+
+Not sure yet, will get around to it soon.
+
+> Doesn't Webpack do something like this?
+
+Kinda! _but_ only for production bundles, which means you still need to include all duplicate images inside your source.
+
+## 1.0.0 todo list
+
+-[ ] Test coverage
+-[ ] Move to Node Async APIs
+-[ ] Improve public API to just `single-origin` for create/update pipeline
+-[ ] Test on unix and Windows systems
+-[ ] Automagically detect React Native projects and set defaults
