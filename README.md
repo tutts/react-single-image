@@ -18,14 +18,14 @@ The global `/image` folder is an exception to that modular rule, and with time w
 
 Single Origin encourages the user to tightly couple images within a component, allowing the image to be moved/deleted freely, and not increase the project size by adding duplicate images commonly used in other component modules.
 
-Single Origin does this by walking a projects source files, and identifies images based on it's matcher, it then hoists unique images into a global directory and leaves behind a [Symlink](https://en.wikipedia.org/wiki/Symbolic_link) or [Reference File](#how-does-this-work-with-react-native?).
+Single Origin does this by walking a projects source files, and identifies images based on it's [matcher](#options), it then hoists unique images into a global directory and leaves behind a [Symlink](https://en.wikipedia.org/wiki/Symbolic_link) or [Reference File](#how-does-this-work-with-react-native).
 
 <img src="https://i.imgur.com/lzyqywB.png" width="400" />
 
 ## Installation
 
 ```
-yarn add single-origin@0.0.1-beta.2
+yarn add single-origin@0.0.1-beta
 ```
 
 1. Add a global target folder for your images e.g. `my-react-project/images`
