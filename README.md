@@ -6,6 +6,12 @@ Image deduplication for React and React Native projects
 >
 > This project is under active development, APIs are **very** likely to change, and is still experimental, so please make sure you work on a separate branch as to not lose any files until production ready 🙃
 
+* [Installation](#installation)
+* [Configuration](#configuration)
+* [Usage](#usage)
+* [API](#api)
+* [FAQ](#faq)
+
 ## Why?
 
 In a loosely coupled component world, its common for the View, Styles, Tests etc to coexist together.
@@ -14,7 +20,7 @@ The global `/image` folder is an exception to that modular rule, and with time w
 
 <img src="https://i.imgur.com/BHrBONf.png" width="400" />
 
-## Solution
+## How?
 
 Single Origin encourages the user to tightly couple images within a component, allowing the image to be moved/deleted freely, and not increase the project size by adding duplicate images commonly used in other component modules.
 
